@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Search from './components/Search'
+import Spinner from './components/Spinner'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
@@ -13,10 +14,15 @@ const API_OPTIONS = {
   }
 }
 
+type Movie = {
+  id: number
+  title: string
+}
+
 function App() {
   const [searchTerm, setSearchTerm] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
-  const [movieList, setMovieList] = useState([])
+  const [movieList, setMovieList] = useState<Movie[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const fetchMovies = async () => {
@@ -71,9 +77,20 @@ function App() {
         </header>
 
         <section className='space-y-9'>
-          <h2>All Movies</h2>
+          <h2 className="mt-5">All Movies</h2>
 
-          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+          {isLoading ? (
+            <Spinner/>
+          ) : errorMessage ? (
+            <p className="text-red-500">{errorMessage}</p>
+          ) : (
+            <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {movieList.map((movie) => (
+                <p key={movie.id}>{movie.title}</p>
+              ))}
+            </ul>
+          )
+          }
         </section>
 
       </div>
