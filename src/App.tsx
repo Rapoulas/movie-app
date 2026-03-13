@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import Search from './components/Search'
 import Spinner from './components/Spinner'
+import MovieCard from './components/MovieCard'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
@@ -14,9 +15,13 @@ const API_OPTIONS = {
   }
 }
 
-type Movie = {
+export type Movie = {
   id: number
   title: string
+  poster_path: string | null
+  vote_average: number
+  original_language: string
+  release_date: string
 }
 
 function App() {
@@ -86,7 +91,7 @@ function App() {
           ) : (
             <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {movieList.map((movie) => (
-                <p key={movie.id}>{movie.title}</p>
+                <MovieCard key={movie.id} movie={movie}/>
               ))}
             </ul>
           )
