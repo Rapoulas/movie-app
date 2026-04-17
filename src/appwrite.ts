@@ -31,3 +31,24 @@ export const updateSearchCount = async (searchTerm : string, movie: any) => {
     console.error('Error updating search count:', error)
   }
 }
+
+export const getTrendingMovies = async () => {
+  try {
+    const result = await database.listRows(DATABASE_ID, COLLECTION_ID, [
+      Query.limit(5),
+      Query.orderDesc("count")
+    ])
+
+    return result.rows.map((row) => ({
+      id: row.movie_id,
+      title: row.searchTerm,
+      poster_path: row.poster_url?.replace('https://image.tmdb.org/t/p/w500', '') ?? null,
+      vote_average: 0,
+      original_language: '',
+      release_date: '',
+    }))
+  } catch (error) {
+    console.error('Error fetching search count:', error)
+    return []
+  }
+}

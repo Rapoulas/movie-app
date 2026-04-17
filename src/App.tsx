@@ -4,7 +4,7 @@ import Search from './components/Search'
 import Spinner from './components/Spinner'
 import MovieCard from './components/MovieCard'
 import { useDebounce } from 'react-use'
-import { updateSearchCount } from './appwrite'
+import { getTrendingMovies, updateSearchCount } from './appwrite'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY
@@ -20,7 +20,7 @@ const API_OPTIONS = {
 export type Movie = {
   id: number
   title: string
-  poster_path: string | null
+  poster_path: string | undefined
   vote_average: number
   original_language: string
   release_date: string
@@ -32,6 +32,7 @@ function App() {
   const [movieList, setMovieList] = useState<Movie[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [debounceSearchTerm, setDebounceSearchTerm] = useState('')
+  const [trendingMovies, setTrendingMovies] = useState<Movie[]>([])
 
   useDebounce(() => setDebounceSearchTerm(searchTerm), 500, [searchTerm])
 
@@ -68,6 +69,19 @@ function App() {
     }
   }
 
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies()
+      setTrendingMovies(movies)
+    } catch (error) {
+      console.error('Error fetching trending movies:', error)
+    }
+  }
+
+  useEffect(() => {
+    loadTrendingMovies()
+  }, [])
+
   useEffect(() => {
     fetchMovies(debounceSearchTerm)
   }, [debounceSearchTerm]) 
@@ -90,8 +104,23 @@ function App() {
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
 
+        {trendingMovies.length > 0  && (
+          <section className="trending">
+            <h2>Trending Movies</h2>
+            
+            <ul>
+              {trendingMovies.map((movie, index) => (
+                <li key={movie.id}>
+                  <p>{index + 1}</p>
+                  <img src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/no-movie.png'} alt={movie.title}></img>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <section className='space-y-9'>
-          <h2 className="mt-5">All Movies</h2>
+          <h2>All Movies</h2>
 
           {isLoading ? (
             <Spinner/>

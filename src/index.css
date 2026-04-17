@@ -88,6 +88,26 @@
       @apply text-gray-100 font-medium text-base;
     }
   }
+
+  .trending {
+    @apply mt-20;
+
+    & ul {
+      @apply flex flex-row overflow-y-auto gap-5 -mt-10 w-full hide-scrollbar;
+    }
+
+    & ul li {
+      @apply min-w-57.5 flex flex-row items-center;
+    }
+
+    & ul li p {
+      @apply fancy-text mt-5.5 text-nowrap;
+    }
+
+    & ul li img {
+      @apply w-31.75 h-40.75 rounded-lg object-cover -ml-3.5;
+    }
+  }
 }
 
 @utility fancy-text {
